@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>朱雀 — Tokyocompass | 方角で歩く、東京。</title>
+  <meta name="description" content="朱雀 - Tokyocompass は、コンパスの針だけを頼りに東京を歩く、アーティスティックな地図アプリ。iOSで近日配信。" />
+  <meta property="og:title" content="朱雀 — Tokyocompass" />
+  <meta property="og:description" content="方角で歩く、東京。コンパスの針が導く、寄り道の美学。" />
+  <meta property="og:url" content="https://tokyocompass.app" />
+  <meta property="og:type" content="website" />
+  <link rel="icon" type="image/svg+xml" href="assets/compass.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ローディング演出：墨の幕 -->
+  <div class="curtain" id="curtain" aria-hidden="true">
+    <span class="curtain__mark">朱雀</span>
+  </div>
+
+  <header class="header">
+    <div class="header__brand">
+      <span class="header__vermilion-dot" aria-hidden="true"></span>
+      <span class="header__name">朱雀</span>
+      <span class="header__sub">Tokyocompass</span>
+    </div>
+    <a class="header__cta" href="#download">近日配信<span aria-hidden="true"> — iOS</span></a>
+  </header>
+
+  <main>
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <div class="hero__bearing" id="bearing" aria-hidden="true">
+        <span class="hero__bearing-deg" id="bearingDeg">000°</span>
+        <span class="hero__bearing-dir" id="bearingDir">北 / N</span>
+      </div>
+
+      <div class="hero__compass-wrap">
+        <!-- コンパス本体（オリジナルSVGを分解して演出用に再構成） -->
+        <svg class="compass" id="compass" viewBox="0 0 1024 1024" role="img" aria-label="朱雀のコンパス。針が回転して方角を指す。">
+          <!-- 方位目盛（JSで生成） -->
+          <g id="ticks" class="compass__ticks"></g>
+          <!-- 方位文字 -->
+          <g class="compass__cardinals" id="cardinals">
+            <text x="512" y="150" text-anchor="middle">北</text>
+            <text x="892" y="526" text-anchor="middle">東</text>
+            <text x="512" y="912" text-anchor="middle">南</text>
+            <text x="132" y="526" text-anchor="middle">西</text>
+          </g>
+          <!-- 手描きの外環（原画） -->
+          <g class="compass__rings" id="rings">
+            <path d="M 777.22,512.00 C 775.82,555.77 756.60,601.31 735.24,640.89 C 713.89,680.46 686.30,727.48 649.09,749.45 C 611.88,771.41 556.16,775.34 512.00,772.68 C 467.84,770.01 423.76,754.04 384.14,733.46 C 344.52,712.89 303.54,686.16 274.29,649.24 C 245.03,612.33 211.82,559.61 208.59,512.00 C 205.37,464.39 228.94,406.15 254.94,363.59 C 280.94,321.03 321.73,275.99 364.58,256.65 C 407.42,237.32 463.92,245.73 512.00,247.57 C 560.08,249.42 614.42,245.95 653.03,267.73 C 691.64,289.51 722.96,337.54 743.66,378.25 C 764.36,418.96 778.62,468.23 777.22,512.00 Z M 769.61,512.00 C 771.35,553.11 753.38,603.00 730.85,638.35 C 708.32,673.70 670.93,709.02 634.46,724.10 C 597.98,739.18 550.96,732.06 512.00,728.83 C 473.04,725.61 435.92,720.57 400.71,704.75 C 365.51,688.94 323.74,666.08 300.77,633.95 C 277.81,601.83 257.32,549.42 262.92,512.00 C 268.52,474.58 310.66,440.26 334.39,409.45 C 358.11,378.65 375.68,352.40 405.28,327.15 C 434.88,301.91 476.65,257.59 512.00,257.98 C 547.35,258.37 582.63,307.21 617.37,329.50 C 652.10,351.78 695.03,361.26 720.41,391.68 C 745.78,422.09 767.87,470.89 769.61,512.00 Z" fill="#181311" fill-rule="evenodd" />
+          </g>
+          <!-- 針（原画）：北＝朱、南＝墨 -->
+          <g class="compass__needle" id="needle">
+            <path d="M 512.00,330.00 C 530.00,330.00 566.00,473.67 566.00,512.00 C 566.00,550.33 530.00,560.00 512.00,560.00 C 494.00,560.00 458.00,550.33 458.00,512.00 C 458.00,473.67 494.00,330.00 512.00,330.00 Z" fill="#9F3327" />
+            <path d="M 512.00,694.00 C 530.00,694.00 566.00,550.33 566.00,512.00 C 566.00,473.67 530.00,464.00 512.00,464.00 C 494.00,464.00 458.00,473.67 458.00,512.00 C 458.00,550.33 494.00,694.00 512.00,694.00 Z" fill="#181311" />
+          </g>
+          <!-- 軸 -->
+          <circle cx="512" cy="512" r="10" fill="#FCFBF8" stroke="#181311" stroke-width="5" />
+        </svg>
+      </div>
+
+      <div class="hero__text">
+        <p class="hero__kicker reveal">TOKYOCOMPASS.APP — FOR iOS</p>
+        <h1 class="hero__title">
+          <span class="hero__title-line reveal">方角で歩く、</span>
+          <span class="hero__title-line reveal">東京<span class="hero__punct">。</span></span>
+        </h1>
+        <p class="hero__lead reveal">
+          目的地は、決めなくていい。<br />
+          朱の針が指す方へ、ただ歩く。<br />
+          <em>朱雀 — Tokyocompass</em> は、道に迷うことを愉しむための地図。
+        </p>
+        <div class="hero__actions reveal">
+          <a href="#download" class="btn btn--primary">App Storeで近日配信</a>
+          <a href="#concept" class="btn btn--ghost">思想を読む</a>
+        </div>
+      </div>
+
+      <div class="hero__scrolldown" aria-hidden="true">
+        <span class="hero__scrolldown-line"></span>
+        <span class="hero__scrolldown-text">南へ</span>
+      </div>
+    </section>
+
+    <!-- ============ 帯：流れる文字 ============ -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track">
+        <span>朱雀 — 南方を守護する朱の鳥 — TOKYOCOMPASS — 迷うことは、出会うこと — </span>
+        <span>朱雀 — 南方を守護する朱の鳥 — TOKYOCOMPASS — 迷うことは、出会うこと — </span>
+      </div>
+    </div>
+
+    <!-- ============ CONCEPT ============ -->
+    <section class="concept" id="concept">
+      <div class="concept__inner">
+        <span class="section-index reveal">壱 / CONCEPT</span>
+        <h2 class="concept__title">
+          <span class="reveal">地図を、</span>
+          <span class="reveal">消した<span class="hero__punct">。</span></span>
+        </h2>
+        <div class="concept__body reveal">
+          <p>
+            現代の地図アプリは、最短経路を教えてくれる。<br />
+            けれど、最短経路の上に「発見」は落ちていない。
+          </p>
+          <p>
+            朱雀が画面に映すのは、一本の針だけ。<br />
+            路地の突き当たり、名前のない坂、夕暮れの商店街。<br />
+            針の指す方角へ歩けば、東京はまだ知らない顔を見せる。
+          </p>
+          <p class="concept__quote">
+            「四神の朱雀は南を守る。<br />
+            &nbsp;&nbsp;あなたの散歩は、あなたが守る。」
+          </p>
+        </div>
+      </div>
+      <div class="concept__vertical" aria-hidden="true">迷うことは、出会うこと</div>
+    </section>
+
+    <!-- ============ FEATURES ============ -->
+    <section class="features" id="features">
+      <span class="section-index section-index--center reveal">弐 / FEATURES</span>
+      <h2 class="features__title reveal">針一本の、道具箱<span class="hero__punct">。</span></h2>
+
+      <div class="features__grid">
+        <article class="feature reveal">
+          <span class="feature__num">01</span>
+          <svg class="feature__icon" viewBox="0 0 64 64" aria-hidden="true">
+            <circle cx="32" cy="32" r="26" fill="none" stroke="#181311" stroke-width="2.5" />
+            <path d="M32 12 L38 32 L32 52 L26 32 Z" fill="#9F3327" />
+          </svg>
+          <h3 class="feature__name">方角モード</h3>
+          <p class="feature__desc">行き先を「北北東」のように方角で選ぶ。経路は表示しない。角を曲がるたび、針が静かに揺れて教えてくれる。</p>
+        </article>
+
+        <article class="feature reveal">
+          <span class="feature__num">02</span>
+          <svg class="feature__icon" viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M12 50 C 20 20, 30 46, 38 24 C 42 14, 50 22, 52 14" fill="none" stroke="#181311" stroke-width="2.5" stroke-linecap="round" />
+            <circle cx="12" cy="50" r="4" fill="#9F3327" />
+          </svg>
+          <h3 class="feature__name">足あとの朱線</h3>
+          <p class="feature__desc">歩いた道だけが、生成りの紙に朱の線で描かれていく。あなたの散歩が、あなただけの東京の地図になる。</p>
+        </article>
+
+        <article class="feature reveal">
+          <span class="feature__num">03</span>
+          <svg class="feature__icon" viewBox="0 0 64 64" aria-hidden="true">
+            <rect x="16" y="10" width="32" height="44" rx="4" fill="none" stroke="#181311" stroke-width="2.5" />
+            <circle cx="32" cy="30" r="8" fill="none" stroke="#9F3327" stroke-width="2.5" />
+            <line x1="32" y1="24" x2="32" y2="30" stroke="#9F3327" stroke-width="2.5" stroke-linecap="round" />
+          </svg>
+          <h3 class="feature__name">結界（けっかい）</h3>
+          <p class="feature__desc">「終電まで」「この駅の半径2km」— 範囲を決めて迷子になる。境界に近づくと、針がそっと家路を指す。</p>
+        </article>
+
+        <article class="feature reveal">
+          <span class="feature__num">04</span>
+          <svg class="feature__icon" viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M32 8 C 20 20, 14 30, 14 40 a18 18 0 0 0 36 0 C 50 30 44 20 32 8 Z" fill="none" stroke="#181311" stroke-width="2.5" />
+            <circle cx="32" cy="40" r="5" fill="#9F3327" />
+          </svg>
+          <h3 class="feature__name">拾いもの帖</h3>
+          <p class="feature__desc">気になった場所に朱印を落とす。写真も評価も要らない。方角と、ひとことの覚え書きだけの、静かなブックマーク。</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ SCENE：使用風景 ============ -->
+    <section class="scene">
+      <div class="scene__inner">
+        <span class="section-index reveal">参 / SCENE</span>
+        <h2 class="scene__title reveal">ある日曜の、四時間<span class="hero__punct">。</span></h2>
+        <ol class="scene__timeline">
+          <li class="scene__step reveal">
+            <span class="scene__time">13:00</span>
+            <p>中目黒で「南西」を選ぶ。理由はない。針が朱く振れる。</p>
+          </li>
+          <li class="scene__step reveal">
+            <span class="scene__time">13:40</span>
+            <p>知らない坂の途中、古い銭湯の煙突。朱印をひとつ落とす。</p>
+          </li>
+          <li class="scene__step reveal">
+            <span class="scene__time">15:10</span>
+            <p>商店街の外れの喫茶店。地図アプリには載っていない味。</p>
+          </li>
+          <li class="scene__step reveal">
+            <span class="scene__time">17:00</span>
+            <p>結界が夕闇に触れて、針が北を指す。今日の朱線は、9.4km。</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ DOWNLOAD ============ -->
+    <section class="download" id="download">
+      <div class="download__compass" aria-hidden="true">
+        <img src="assets/compass-mark.svg" alt="" />
+      </div>
+      <span class="section-index section-index--center section-index--light reveal">肆 / RELEASE</span>
+      <h2 class="download__title reveal">まもなく、南から<span class="hero__punct hero__punct--light">。</span></h2>
+      <p class="download__lead reveal">
+        朱雀 — Tokyocompass は、App Store にて近日配信予定。<br />
+        配信開始の報せは、針より早くお届けします。
+      </p>
+      <div class="download__actions reveal">
+        <a class="appstore-badge" href="#" aria-label="App Store で近日配信（準備中）">
+          <svg viewBox="0 0 24 24" class="appstore-badge__logo" aria-hidden="true">
+            <path fill="currentColor" d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8.98-.2 1.92-.86 3.02-.78 1.53.12 2.55.72 3.28 1.81-3.03 1.82-2.55 5.79.47 7.02-.65 1.44-1.5 2.86-2.85 4.12ZM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25Z"/>
+          </svg>
+          <span class="appstore-badge__text">
+            <small>Coming soon on the</small>
+            <strong>App Store</strong>
+          </span>
+        </a>
+      </div>
+      <p class="download__domain reveal">tokyocompass.app</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__brand">
+      <span class="header__vermilion-dot" aria-hidden="true"></span>
+      朱雀 — Tokyocompass
+    </div>
+    <nav class="footer__nav">
+      <a href="#concept">思想</a>
+      <a href="#features">機能</a>
+      <a href="#download">配信</a>
+    </nav>
+    <p class="footer__copy">&copy; 2026 tokyocompass.app — 針は南を、あなたは好きな方を。</p>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

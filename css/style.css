@@ -1,0 +1,580 @@
+/* ============================================================
+   朱雀 — Tokyocompass LP
+   紙:#FCFBF8 / 墨:#181311 / 朱:#9F3327
+============================================================ */
+:root {
+  --paper: #FCFBF8;
+  --ink: #181311;
+  --vermilion: #9F3327;
+  --vermilion-soft: rgba(159, 51, 39, 0.08);
+  --ink-soft: rgba(24, 19, 17, 0.55);
+  --serif-jp: "Shippori Mincho", "Hiragino Mincho ProN", serif;
+  --serif-en: "Cormorant Garamond", Georgia, serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif-jp);
+  line-height: 1.9;
+  overflow-x: hidden;
+  /* 紙の質感（うっすら） */
+  background-image:
+    radial-gradient(rgba(24, 19, 17, 0.025) 1px, transparent 1px);
+  background-size: 5px 5px;
+}
+
+::selection { background: var(--vermilion); color: var(--paper); }
+
+/* ============ ローディングの幕 ============ */
+.curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--ink);
+  display: grid;
+  place-items: center;
+  transition: transform 1s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.curtain--open { transform: translateY(-100%); }
+.curtain__mark {
+  color: var(--paper);
+  font-size: clamp(2rem, 6vw, 4rem);
+  letter-spacing: 0.5em;
+  padding-left: 0.5em;
+  opacity: 0;
+  animation: curtainMark 1.2s ease 0.15s forwards;
+}
+@keyframes curtainMark {
+  from { opacity: 0; filter: blur(8px); }
+  to   { opacity: 1; filter: blur(0); }
+}
+
+/* ============ ヘッダー ============ */
+.header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.1rem clamp(1.2rem, 4vw, 3rem);
+  mix-blend-mode: multiply;
+}
+.header__brand {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+.header__vermilion-dot {
+  width: 0.6em; height: 0.6em;
+  border-radius: 50%;
+  background: var(--vermilion);
+  display: inline-block;
+  transform: translateY(-0.1em);
+}
+.header__name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+}
+.header__sub {
+  font-family: var(--serif-en);
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.header__cta {
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  color: var(--ink);
+  text-decoration: none;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  padding: 0.45em 1.2em;
+  transition: background 0.3s, color 0.3s;
+}
+.header__cta:hover { background: var(--vermilion); border-color: var(--vermilion); color: var(--paper); }
+
+/* ============ HERO ============ */
+.hero {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1rem, 4vw, 4rem);
+  padding: clamp(5rem, 10vh, 7rem) clamp(1.2rem, 5vw, 5rem) 4rem;
+  position: relative;
+}
+
+.hero__bearing {
+  position: absolute;
+  bottom: 2.4rem;
+  left: clamp(1.2rem, 5vw, 5rem);
+  font-family: var(--serif-en);
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+  color: var(--ink-soft);
+}
+.hero__bearing-deg {
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-variant-numeric: tabular-nums;
+  color: var(--vermilion);
+}
+.hero__bearing-dir {
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+}
+
+.hero__compass-wrap {
+  order: 2;
+  display: grid;
+  place-items: center;
+}
+.compass {
+  width: min(78vw, 560px);
+  height: auto;
+  cursor: crosshair;
+  user-select: none;
+}
+.compass__rings { transform-origin: 512px 512px; }
+.compass__needle {
+  transform-origin: 512px 512px;
+  will-change: transform;
+  filter: drop-shadow(0 6px 10px rgba(24, 19, 17, 0.18));
+}
+.compass__ticks { transform-origin: 512px 512px; }
+.compass__ticks line { stroke: var(--ink); }
+.compass__ticks line.tick--minor { opacity: 0.28; }
+.compass__ticks line.tick--major { opacity: 0.75; }
+.compass__ticks line.tick--north { stroke: var(--vermilion); opacity: 1; }
+.compass__cardinals text {
+  font-family: var(--serif-jp);
+  font-size: 44px;
+  font-weight: 700;
+  fill: var(--ink);
+  opacity: 0.85;
+}
+.compass__cardinals text:first-child { fill: var(--vermilion); }
+
+.hero__text { order: 1; }
+.hero__kicker {
+  font-family: var(--serif-en);
+  font-size: 0.8rem;
+  letter-spacing: 0.4em;
+  color: var(--vermilion);
+  margin-bottom: 1.2rem;
+}
+.hero__title {
+  font-size: clamp(2.6rem, 7vw, 5.2rem);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: 0.06em;
+}
+.hero__title-line { display: block; }
+.hero__punct { color: var(--vermilion); }
+.hero__punct--light { color: var(--vermilion); }
+.hero__lead {
+  margin-top: 1.8rem;
+  font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+  color: var(--ink-soft);
+}
+.hero__lead em {
+  font-style: normal;
+  color: var(--ink);
+  border-bottom: 1px solid var(--vermilion);
+}
+.hero__actions {
+  margin-top: 2.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.btn {
+  font-family: var(--serif-jp);
+  font-size: 0.95rem;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  padding: 0.85em 2em;
+  border-radius: 999px;
+  transition: transform 0.3s, background 0.3s, color 0.3s, box-shadow 0.3s;
+}
+.btn--primary {
+  background: var(--vermilion);
+  color: var(--paper);
+  box-shadow: 0 8px 24px rgba(159, 51, 39, 0.25);
+}
+.btn--primary:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(159, 51, 39, 0.35); }
+.btn--ghost {
+  color: var(--ink);
+  border: 1px solid rgba(24, 19, 17, 0.35);
+}
+.btn--ghost:hover { border-color: var(--ink); background: var(--vermilion-soft); }
+
+.hero__scrolldown {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--ink-soft);
+}
+.hero__scrolldown-line {
+  width: 1px;
+  height: 3.2rem;
+  background: var(--ink);
+  transform-origin: top;
+  animation: scrollLine 2.2s ease-in-out infinite;
+}
+@keyframes scrollLine {
+  0% { transform: scaleY(0); }
+  45% { transform: scaleY(1); transform-origin: top; }
+  46% { transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+.hero__scrolldown-text {
+  font-size: 0.72rem;
+  letter-spacing: 0.4em;
+  writing-mode: vertical-rl;
+}
+
+/* ============ 帯 ============ */
+.marquee {
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  overflow: hidden;
+  padding: 0.9rem 0;
+  background: var(--paper);
+}
+.marquee__track {
+  display: flex;
+  white-space: nowrap;
+  width: max-content;
+  animation: marquee 36s linear infinite;
+}
+.marquee__track span {
+  font-size: 1rem;
+  letter-spacing: 0.35em;
+  color: var(--ink-soft);
+  padding-right: 2em;
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ============ セクション共通 ============ */
+.section-index {
+  display: inline-block;
+  align-self: flex-start;
+  font-family: var(--serif-en);
+  font-size: 0.78rem;
+  letter-spacing: 0.45em;
+  color: var(--vermilion);
+  border-bottom: 1px solid var(--vermilion);
+  padding-bottom: 0.4em;
+  margin-bottom: 2.5rem;
+}
+.section-index--center { align-self: center; }
+.section-index--light { color: #E8B7AE; border-color: #E8B7AE; }
+
+/* ============ CONCEPT ============ */
+.concept {
+  position: relative;
+  padding: clamp(6rem, 14vh, 10rem) clamp(1.2rem, 6vw, 6rem);
+  display: flex;
+}
+.concept__inner { max-width: 640px; }
+.concept__title {
+  font-size: clamp(2.2rem, 5.5vw, 4rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+  margin-bottom: 2.5rem;
+}
+.concept__title > span { display: block; }
+.concept__title .hero__punct { display: inline; }
+.concept__body p { margin-bottom: 1.6rem; color: var(--ink-soft); }
+.concept__body p:nth-child(2) { color: var(--ink); }
+.concept__quote {
+  margin-top: 3rem;
+  padding-left: 1.4rem;
+  border-left: 2px solid var(--vermilion);
+  color: var(--ink) !important;
+  font-weight: 500;
+}
+.concept__vertical {
+  position: absolute;
+  right: clamp(1rem, 5vw, 5rem);
+  top: 50%;
+  transform: translateY(-50%);
+  writing-mode: vertical-rl;
+  font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+  letter-spacing: 0.5em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(24, 19, 17, 0.25);
+  pointer-events: none;
+}
+
+/* ============ FEATURES ============ */
+.features {
+  padding: clamp(6rem, 14vh, 10rem) clamp(1.2rem, 6vw, 6rem);
+  display: flex;
+  flex-direction: column;
+  background:
+    linear-gradient(rgba(159, 51, 39, 0.035), rgba(159, 51, 39, 0.035)),
+    var(--paper);
+}
+.features__title {
+  text-align: center;
+  font-size: clamp(1.9rem, 4.5vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  margin-bottom: 4rem;
+}
+.features__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  max-width: 1180px;
+  margin: 0 auto;
+  width: 100%;
+}
+.feature {
+  position: relative;
+  border: 1px solid rgba(24, 19, 17, 0.18);
+  border-radius: 4px;
+  padding: 2.2rem 1.8rem 2rem;
+  background: var(--paper);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+}
+.feature:hover {
+  transform: translateY(-6px);
+  border-color: var(--vermilion);
+  box-shadow: 0 18px 40px rgba(24, 19, 17, 0.08);
+}
+.feature__num {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.4rem;
+  font-family: var(--serif-en);
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  color: var(--vermilion);
+}
+.feature__icon {
+  width: 56px;
+  height: 56px;
+  margin-bottom: 1.4rem;
+}
+.feature__name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  margin-bottom: 0.8rem;
+}
+.feature__desc {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  line-height: 2;
+}
+
+/* ============ SCENE ============ */
+.scene { padding: clamp(6rem, 14vh, 10rem) clamp(1.2rem, 6vw, 6rem); }
+.scene__inner { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; }
+.scene__title {
+  font-size: clamp(1.9rem, 4.5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  margin-bottom: 3.5rem;
+}
+.scene__timeline {
+  list-style: none;
+  border-left: 1px solid rgba(24, 19, 17, 0.3);
+}
+.scene__step {
+  position: relative;
+  padding: 0 0 2.4rem 2rem;
+}
+.scene__step::before {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 0.7em;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--vermilion);
+}
+.scene__step:last-child { padding-bottom: 0; }
+.scene__time {
+  font-family: var(--serif-en);
+  font-size: 0.85rem;
+  letter-spacing: 0.25em;
+  color: var(--vermilion);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+.scene__step p { color: var(--ink-soft); }
+
+/* ============ DOWNLOAD ============ */
+.download {
+  position: relative;
+  overflow: hidden;
+  background: var(--ink);
+  color: var(--paper);
+  text-align: center;
+  padding: clamp(7rem, 16vh, 11rem) clamp(1.2rem, 6vw, 6rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.download__compass {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(120vw, 820px);
+  transform: translate(-50%, -50%);
+  opacity: 0.12;
+  pointer-events: none;
+}
+.download__compass img {
+  width: 100%;
+  animation: slowSpin 90s linear infinite;
+}
+@keyframes slowSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.download__title {
+  position: relative;
+  font-size: clamp(2.2rem, 5.5vw, 4rem);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  margin-bottom: 1.8rem;
+}
+.download__lead {
+  position: relative;
+  color: rgba(252, 251, 248, 0.72);
+  margin-bottom: 3rem;
+}
+.download__actions { position: relative; }
+.appstore-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  text-decoration: none;
+  color: var(--paper);
+  border: 1px solid rgba(252, 251, 248, 0.5);
+  border-radius: 14px;
+  padding: 0.8rem 1.6rem;
+  transition: background 0.3s, border-color 0.3s, transform 0.3s;
+}
+.appstore-badge:hover {
+  background: var(--vermilion);
+  border-color: var(--vermilion);
+  transform: translateY(-2px);
+}
+.appstore-badge__logo { width: 2rem; height: 2rem; }
+.appstore-badge__text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  line-height: 1.35;
+}
+.appstore-badge__text small {
+  font-family: var(--serif-en);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  opacity: 0.8;
+}
+.appstore-badge__text strong {
+  font-family: var(--serif-en);
+  font-size: 1.25rem;
+  letter-spacing: 0.05em;
+}
+.download__domain {
+  position: relative;
+  margin-top: 3rem;
+  font-family: var(--serif-en);
+  letter-spacing: 0.5em;
+  font-size: 0.85rem;
+  color: rgba(252, 251, 248, 0.5);
+}
+
+/* ============ FOOTER ============ */
+.footer {
+  padding: 2.5rem clamp(1.2rem, 5vw, 4rem);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid rgba(24, 19, 17, 0.15);
+}
+.footer__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+}
+.footer__nav { display: flex; gap: 1.5rem; }
+.footer__nav a {
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+}
+.footer__nav a:hover { color: var(--vermilion); }
+.footer__copy {
+  width: 100%;
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  letter-spacing: 0.1em;
+}
+
+/* ============ スクロール出現 ============ */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============ レスポンシブ ============ */
+@media (max-width: 860px) {
+  .hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding-top: 6rem;
+    gap: 1.5rem;
+  }
+  .hero__text { order: 2; }
+  .hero__compass-wrap { order: 1; }
+  .hero__actions { justify-content: center; }
+  .hero__bearing { position: static; align-items: center; margin: 0 auto; }
+  .concept__vertical { display: none; }
+  .header__sub { display: none; }
+  .hero__scrolldown { display: none; }
+}
+
+/* ============ モーション配慮 ============ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .marquee__track, .download__compass img, .hero__scrolldown-line { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .curtain { display: none; }
+}
